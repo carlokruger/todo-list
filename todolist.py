@@ -2,12 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date
 from datetime import datetime
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-
-
 engine = create_engine('sqlite:///todo.db?check_same_thread=False')
+
 
 class Table(Base):
     __tablename__ = 'task'
@@ -21,13 +21,37 @@ class Table(Base):
 
 Base.metadata.create_all(engine)
 
+Session = sessionmaker(bind=engine)
+session = Session()
+session.commit()
+
 
 def show_tasks():
-    pass
-
+    rows = session.query(Table).all()
+    if len(rows) == 0:
+        print("Nothing to do!")
+        print()
+    else:
+        print("Today:")
+        for idx, row in enumerate(rows):
+            print(str((idx + 1)) + ") " + row.task)
+        print()
 
 def add_task():
-    pass
+    print("Enter task")
+    task = input()
+    new_row = Table(task=task)
+    session.add(new_row)
+    session.commit()
+    print("The task has been added")
+    print()
+
+
+def print_menu():
+    print("1) Today's tasks")
+    print("2) Add task")
+    print("0) Exit")
+    print()
 
 
 while True:
