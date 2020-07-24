@@ -91,7 +91,15 @@ def missed_tasks():
 
 
 def delete_task():
-    pass
+    print("Chose the number of the task you want to delete:")
+    rows = session.query(Table).order_by(Table.deadline).all()
+    for idx, row in enumerate(rows):
+        print(str(idx + 1) + ". " + row.task + ". " + str(datetime.datetime.strftime(row.deadline, '%d %b')))
+    selection = int(input())
+    selected_row = rows[selection - 1]
+    session.delete(selected_row)
+    session.commit()
+    print("The task has been deleted!")
 
 
 def print_menu():
