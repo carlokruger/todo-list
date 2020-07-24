@@ -76,11 +76,31 @@ def all_tasks():
     print()
 
 
+def missed_tasks():
+    print("Missed tasks:")
+    today = datetime.date.today()
+    rows = session.query(Table).filter(Table.deadline < today).order_by(Table.deadline).all()
+    num = 1
+    if len(rows) == 0:
+        print("No matching tasks!")
+    else:
+        for row in rows:
+            print(str(num) + ". " + row.task + ". " + str(datetime.datetime.strftime(row.deadline, '%d %b')))
+            num += 1
+        print()
+
+
+def delete_task():
+    pass
+
+
 def print_menu():
     print("1) Today's tasks")
     print("2) Week's tasks")
     print("3) All tasks")
-    print("4) Add task")
+    print("4) Missed tasks")
+    print("5) Add task")
+    print("6) Delete task")
     print("0) Exit")
     print()
 
@@ -96,6 +116,10 @@ while True:
     elif action == '3':
         all_tasks()
     elif action == '4':
+        missed_tasks()
+    elif action == '5':
         add_task()
+    elif action == '6':
+        delete_task()
     elif action == '0':
         break
